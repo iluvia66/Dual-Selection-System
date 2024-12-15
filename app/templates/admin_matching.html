@@ -1,0 +1,69 @@
+<!-- templates/admin_matching.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Matching</title>
+</head>
+<body>
+    <h1>志愿匹配管理</h1>
+    
+    <!-- 匹配按钮 -->
+    <form action="{{ url_for('admin_matching.run_matching') }}" method="POST">
+        <button type="submit">开始匹配</button>
+    </form>
+
+    <!-- 显示临时表数据 -->
+    <h2>临时表数据</h2>
+    <table border="1">
+        <tr>
+            <th>Candidate ID</th>
+            <th>Advisor ID</th>
+            <th>Preference Order</th>
+            <th>Status</th>
+            <th>Created At</th>
+        </tr>
+        {% for record in temp_data %}
+        <tr>
+            <td>{{ record.candidate_id }}</td>
+            <td>{{ record.advisor_id }}</td>
+            <td>{{ record.preference_order }}</td>
+            <td>{{ record.status }}</td>
+            <td>{{ record.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- 匹配结果 -->
+    {% if matched_data %}
+    <h2>匹配结果</h2>
+    <table border="1">
+        <tr>
+            <th>Candidate ID</th>
+            <th>Candidate Name</th>
+            <th>Advisor ID</th>
+            <th>Advisor Name</th>
+            <th>Subject Direction</th>
+            <th>Department</th>
+            <th>Match Date</th>
+        </tr>
+        {% for match in matched_data %}
+        <tr>
+            <td>{{ match.candidate_id }}</td>
+            <td>{{ match.candidate_name }}</td>
+            <td>{{ match.advisor_id }}</td>
+            <td>{{ match.advisor_name }}</td>
+            <td>{{ match.subject_name }}</td>
+            <td>{{ match.department }}</td>
+            <td>{{ match.match_date }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <!-- 下载 CSV 按钮 -->
+    <form action="{{ url_for('admin_matching.export_matching') }}" method="GET">
+        <button type="submit">下载匹配结果</button>
+    </form>
+</body>
+</html>

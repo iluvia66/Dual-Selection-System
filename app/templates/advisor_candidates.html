@@ -1,0 +1,55 @@
+ <!-- templates/advisor_candidates.html --> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advisor Candidates</title>
+</head>
+<body>
+    <h1>Candidates for Advisor {{ candidates[0].advisor_name }}</h1>
+
+    <p>
+        已选择: {{ advisor_info.selected_count }} / 最大选择数: {{ advisor_info.annual_quota }}
+    </p>
+
+    <table border="1">
+        <tr>
+            <th>Candidate ID</th>
+            <th>Candidate Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Preference Order</th>
+            <th>Status</th>
+            <th>Match Date</th>
+            <th>Action</th>
+        </tr>
+        {% for candidate in candidates %}
+        <tr>
+            <td>{{ candidate.candidate_id }}</td>
+            <td>{{ candidate.candidate_name }}</td>
+            <td>{{ candidate.candidate_email }}</td>
+            <td>{{ candidate.candidate_phone }}</td>
+            <td>{{ candidate.preference_order }}</td>
+            <td>{{ candidate.status }}</td>
+            <td>{{ candidate.match_date }}</td>
+            <td>
+                <form action="{{ url_for('task_line3.toggle_selection', advisor_id=candidate.advisor_id, candidate_id=candidate.candidate_id) }}" method="POST">
+                    <input type="hidden" name="preference_order" value="{{ candidate.preference_order }}">
+                    {% if candidate.selected %}
+                        <input type="hidden" name="action" value="remove">
+                        <button type="submit">Remove</button>
+                    {% else %}
+                        {% if advisor_info.selected_count < advisor_info.annual_quota %}
+                            <input type="hidden" name="action" value="select">
+                            <button type="submit">Select</button>
+                        {% else %}
+                            <button type="button" disabled>Limit Reached</button>
+                        {% endif %}
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
