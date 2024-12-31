@@ -1,0 +1,80 @@
+{% extends "admin_base.html" %} 
+
+{% block content %}
+
+    <h1>更新每年信息</h1>
+
+    <!-- 显示数据的表格 -->
+    <table border="1">
+        <tr>
+            <th>年份</th>
+            <th>单位代码</th>
+            <th>单位名称</th>
+            <th>地址邮编</th>
+            <th>电话</th>
+            <th>联系人</th>
+            <th>总招生人数</th>
+            <th>额外招生人数</th>
+            <th>更新</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.year }}</td>
+            <td>{{ record.placecode }}</td>
+            <td>{{ record.place }}</td>
+            <td>{{ record.location }}</td>
+            <td>{{ record.phone }}</td>
+            <td>{{ record.context }}</td>
+            <td>{{ record.totalquota }}</td>
+            <td>{{ record.exquota }}</td>
+            <td>
+                <!-- 更新记录的表单 -->
+                <form action="{{ url_for('task_line1.update_everyeardata_route') }}" method="post">
+                    <input type="hidden" name="year" value="{{ record.year }}">
+                    <input type="text" name="placecode" value="{{ record.placecode }}">
+                    <input type="text" name="place" value="{{ record.place }}">
+                    <input type="text" name="location" value="{{ record.location }}">
+                    <input type="text" name="phone" value="{{ record.phone }}">
+                    <input type="text" name="context" value="{{ record.context }}">
+                    <input type="number" name="totalquota" value="{{ record.totalquota }}">
+                    <input type="text" name="exquota" value="{{ record.exquota }}">
+                    <input type="submit" value="更新">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- 插入新记录的表单 -->
+    <h2>插入新年份记录</h2>
+    <form action="{{ url_for('task_line1.insert_everyeardata_route') }}" method="post">
+        <label for="year">年份(必填):</label>
+        <input type="number" id="year" name="year" required>
+        <label for="placecode">单位代码:</label>
+        <input type="text" id="placecode" name="placecode">
+        <label for="place">单位名称:</label>
+        <input type="text" id="place" name="place">
+        <label for="location">地址邮编:</label>
+        <input type="text" id="location" name="location">
+        <label for="phone">电话:</label>
+        <input type="text" id="phone" name="phone">
+        <label for="context">联系方式:</label>
+        <input type="text" id="context" name="context">
+        <label for="totalquota">总招生名额:</label>
+        <input type="number" id="totalquota" name="totalquota">
+        <label for="exquota">额外招生名额:</label>
+        <input type="text" id="exquota" name="exquota">
+        <input type="submit" value="插入">
+    </form>
+
+    <!-- 显示操作结果的消息 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    
+    {% endblock %}

@@ -1,0 +1,38 @@
+{% extends "admin_base.html" %} 
+
+{% block content %}
+
+    <h1>甄选导师</h1>
+    <table border="1">
+        <tr>
+            <th>导师ID</th>
+            <th>姓名</th>
+            <th>职称</th>
+            <th>资格</th>
+            <th>更新职称</th>
+        </tr>
+        {% for advisor in advisors %}
+        <tr>
+            <td>{{ advisor.advisor_id }}</td>
+            <td>{{ advisor.name }}</td>
+            <td>{{ advisor.title }}</td>
+            <td>{{ advisor.is_eligible }}</td>
+            <td>
+                <form action="{{ url_for('task_line1.update_advisor_title_route') }}" method="post">
+                    <input type="hidden" name="advisor_id" value="{{ advisor.advisor_id }}">
+                    <input type="text" name="new_title" required>
+                    <input type="submit" value="点击更新">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+{% endblock %}

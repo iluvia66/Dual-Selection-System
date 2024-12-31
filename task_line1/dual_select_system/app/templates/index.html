@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Page</title>
+</head>
+<body>
+    <h1>Frontend Page</h1>
+    <button id="loadDataBtn">Load Data</button>
+    <div id="dataContainer"></div>
+
+    <script>
+        document.getElementById('loadDataBtn').addEventListener('click', function() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('dataContainer');
+                    let html = '<ul>';
+                    data.forEach(row => {
+                        // 假设你的数据是数组形式，每个元素是一个包含所有列的数组
+                        html += `<li>${row[0]} -${row[1]}</li>`; // 根据你的数据库表结构调整
+                    });
+                    html += '</ul>';
+                    container.innerHTML = html;
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

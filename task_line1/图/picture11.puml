@@ -1,0 +1,34 @@
+@startuml
+
+left to right direction
+
+    actor 研究生院
+package 学院 as s{
+    actor 学科负责人
+}
+
+
+rectangle "招生目录的编制" {
+    usecase "从老师里甄选导师" as UC7
+    usecase "确定导师招生资格" as UC4
+    usecase "编制导师招生目录" as UC5
+    usecase "确认招生指标" as UC6
+    usecase "管理一级学科" as UC1
+    usecase "管理二级学科" as UC2
+    usecase "分配导师到二级学科" as UC3
+}
+
+(研究生院)-->s:下发招生指标
+
+s-->UC7
+s-->UC4
+s-->UC5
+s---> UC6
+学科负责人-->UC1
+学科负责人-->UC2
+学科负责人-->UC3
+UC7 -> UC4 #line.dashed
+UC4 -> UC5  #line.dashed
+
+
+@enduml

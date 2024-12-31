@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <!-- 引入 CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 左侧 Logo -->
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
+        </div>
+
+        <!-- 登录表单 -->
+        <div class="form-container">
+            <h2 class="form-title">用户登录 <span class="subtitle">User Login</span></h2>
+            <form id="login-form" method="POST">
+                <div class="form-group">
+                    <label for="userid">账号：</label>
+                    <input type="text" id="userid" name="userid" placeholder="请输入账号" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码：</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">角色：</label>
+                    <select id="role" name="role" required>
+                        <option value="学科管理员">学科管理员</option>
+                        <option value="导师">导师</option>
+                        <option value="学生用户">学生用户</option>
+                    </select>
+                </div>
+                <!-- 导师 ID 输入框，默认隐藏 -->
+                <div class="form-group" id="advisor-id-container" style="display: none;">
+                    <label for="advisor_id">导师 ID：</label>
+                    <input type="text" id="advisor_id" name="advisor_id" placeholder="请输入导师 ID">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn login-btn">登录</button>
+                    <a href="{{ url_for('task_line1.register') }}" class="btn register-btn">注册</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 获取角色选择器和导师 ID 输入框
+        const roleSelector = document.getElementById('role');
+        const advisorIdContainer = document.getElementById('advisor-id-container');
+
+        // 根据角色选择动态显示或隐藏导师 ID 输入框
+        roleSelector.addEventListener('change', () => {
+            if (roleSelector.value === '导师') {
+                advisorIdContainer.style.display = 'block';
+            } else {
+                advisorIdContainer.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

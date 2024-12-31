@@ -1,0 +1,58 @@
+{% extends "admin_base.html" %} 
+
+{% block content %}
+
+    <h1>导师信息修改</h1>
+    <table border="1">
+        <tr>
+            <th>导师ID</th>
+            <th>姓名</th>
+            <th>职称</th>
+            <th>照片</th>
+            <th>简介</th>
+            <th>电子邮箱</th>
+            <th>电话</th>
+            <th>学院</th>
+            <th>总招生名额</th>
+            <th>剩余招生名额</th>
+            <th>修改</th>
+        </tr>
+        {% for advisor in advisors %}
+        <tr>
+            <td>{{ advisor.advisor_id }}</td>
+            <td>{{ advisor.name }}</td>
+            <td>{{ advisor.title }}</td>
+            <td>{{ advisor.photo_URL }}</td>
+            <td>{{ advisor.biography }}</td>
+            <td>{{ advisor.email }}</td>
+            <td>{{ advisor.phone }}</td>
+            <td>{{ advisor.department }}</td>
+            <td>{{ advisor.annual_quota }}</td>
+            <td>{{ advisor.assigned_quota }}</td>
+            <td>
+                <form action="{{ url_for('task_line1.update_advisor') }}" method="post">
+                    <input type="hidden" name="advisor_id" value="{{ advisor.advisor_id }}">
+                    <input type="text" name="name" placeholder="Name" value="{{ advisor.name }}" required>
+                    <input type="text" name="title" placeholder="Title" value="{{ advisor.title }}" required>
+                    <input type="text" name="photo_URL" placeholder="Photo URL" value="{{ advisor.photo_URL }}">
+                    <textarea name="biography" placeholder="Biography">{{ advisor.biography }}</textarea>
+                    <input type="email" name="email" placeholder="Email" value="{{ advisor.email }}" required>
+                    <input type="text" name="phone" placeholder="Phone" value="{{ advisor.phone }}" required>
+                    <input type="text" name="department" placeholder="Department" value="{{ advisor.department }}" required>
+                    <input type="number" name="annual_quota" placeholder="Annual Quota" value="{{ advisor.annual_quota }}" required>
+                    <input type="number" name="assigned_quota" placeholder="Assigned Quota" value="{{ advisor.assigned_quota }}" required>
+                    <input type="submit" value="更新">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+{% endblock %}

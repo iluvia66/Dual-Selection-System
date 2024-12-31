@@ -1,0 +1,56 @@
+{% extends "advisor_base.html" %} 
+
+{% block content %}
+
+    <h1>Menu View</h1>
+
+    <!-- 显示视图数据的表格 -->
+    <table border="1">
+        <tr>
+            <th>Mon</th>
+            <th>Year</th>
+            <th>ExQuota</th>
+            <th>TotalQuota</th>
+            <th>Department ID</th>
+            <th>DName</th>
+            <th>FirstEst</th>
+            <th>FirstName</th>
+            <th>Message</th>
+            <th>Direction</th>
+            <th>Teacher</th>
+            <th>PlaceCode</th>
+            <th>Location</th>
+            <th>Phone</th>
+            <th>Context</th>
+        </tr>
+        {% for record in view_data %}
+        <tr>
+            <td>{{ record.mno }}</td>
+            <td>{{ record.year }}</td>
+            <td>{{ record.exquota }}</td>
+            <td>{{ record.totalquota }}</td>
+            <td>{{ record.department_id }}</td>
+            <td>{{ record.dname }}</td>
+            <td>{{ record.firtest }}</td>
+            <td>{{ record.firname }}</td>
+            <td>{{ record.message }}</td>
+            <td>{{ record.direction }}</td>
+            <td>{{ record.teacher }}</td>
+            <td>{{ record.placecode }}</td>
+            <td>{{ record.location }}</td>
+            <td>{{ record.phone }}</td>
+            <td>{{ record.context }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- 显示操作结果的消息 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+{% endblock %}

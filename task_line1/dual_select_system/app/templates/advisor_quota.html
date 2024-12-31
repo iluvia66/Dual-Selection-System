@@ -1,0 +1,50 @@
+{% extends "admin_base.html" %} 
+
+{% block content %}
+
+    <!-- 提交年份的表单 -->
+    <h2>确认当前年份</h2>
+    <form action="{{ url_for('task_line1.update_year_is_eligible_route') }}" method="post">
+        <label for="year">年份（必填）:</label>
+        <input type="number" id="year" name="year" required>
+        <input type="submit" value="确认年份">
+    </form>
+
+    <h1>更新招生名额</h1>
+    <table border="1">
+        <tr>
+            <th>导师ID</th>
+            <th>姓名</th>
+            <th>总招生名额</th>
+            <th>剩余招生名额</th>
+            <th>招生资格</th>
+            <th>更新招生名额</th>
+        </tr>
+        {% for advisor in advisors %}
+        <tr>
+            <td>{{ advisor.advisor_id }}</td>
+            <td>{{ advisor.name }}</td>
+            <td>{{ advisor.annual_quota }}</td>
+            <td>{{ advisor.assigned_quota }}</td>
+            <td>{{ advisor.is_eligible }}</td>
+            <td>
+                <form action="{{ url_for('task_line1.update_advisor_quota_route') }}" method="post">
+                    <input type="hidden" name="advisor_id" value="{{ advisor.advisor_id }}">
+                    <input type="number" name="annual_quota" value="{{ advisor.annual_quota }}" required>
+                    <input type="number" name="assigned_quota" value="{{ advisor.assigned_quota }}">
+                    <input type="submit" value="更新招生名额">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+{% endblock %}

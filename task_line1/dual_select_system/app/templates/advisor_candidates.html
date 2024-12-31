@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Candidate Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- 顶部标题 -->
+        <h1>{{ advisor_name }}'s Candidate List</h1>
+
+        <!-- 显示剩余配额 -->
+        <p>Remaining Quota: <span id="remaining-quota">{{ remaining_quota }}</span></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- 候选人表格 -->
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Preference Order</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in candidates %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ candidate.candidate_name }}</td>
+                        <td>{{ candidate.candidate_email }}</td>
+                        <td>{{ candidate.candidate_phone }}</td>
+                        <td>{{ candidate.preference_order or 'N/A' }}</td>
+                        <td>
+                            {% if candidate.status == '待确认' %}
+                                <button class="btn btn-success select-btn" data-candidate-id="{{ candidate.candidate_id }}" data-preference-order="{{ candidate.preference_order }}">
+                                    Select
+                                </button>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Selected</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 显示已选择的候选人 -->
+        <h3>Selected Candidates</h3>
+        <ul id="selected-candidates">
+            {% for selection in temp_selections %}
+                <li>{{ selection.candidate_name }} (Preference: {{ selection.preference_order }})</li>
+            {% endfor %}
+        </ul>
+
+        <!-- 提交选择的按钮 -->
+        <form method="POST" action="{{ url_for('task_line3.confirm_selection', advisor_id=advisor_id) }}">
+            <button type="submit" class="btn btn-primary mt-4">Confirm and Submit Selection</button>
+        </form>
+    </div>
+
+    <!-- 引入Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 自定义JS -->
+    <script>
+        $(document).ready(function() {
+            // 点击选择按钮时
+            $(".select-btn").click(function() {
+                var candidateId = $(this).data("candidate-id");  // 获取候选人ID
+                var preferenceOrder = $(this).data("preference-order");  // 获取偏好顺序
+
+                // 确保 candidateId 是一个有效的整数
+                if (isNaN(candidateId) || candidateId === "") {
+                    alert("Invalid candidate ID.");
+                    return;
+                }
+
+                // 使用 encodeURIComponent 确保 URL 参数正确
+                var url = "{{ url_for('task_line3.select_candidate', advisor_id=advisor_id, candidate_id='') }}" + encodeURIComponent(candidateId) + "/select";
+
+                // 发送AJAX请求，选择候选人
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: { preference_order: preferenceOrder },
+                    success: function(response) {
+                        // 更新已选择的候选人列表
+                        $('#selected-candidates').append('<li>' + response.candidate_name + ' (Preference: ' + response.preference_order + ')</li>');
+                        // 更新剩余配额
+                        $('#remaining-quota').text(response.remaining_quota);
+                        // 禁用按钮，表示已经选择
+                        $('button[data-candidate-id="' + candidateId + '"]').prop('disabled', true).text('Selected');
+                    },
+                    error: function(error) {
+                        alert("Error selecting candidate: " + error.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

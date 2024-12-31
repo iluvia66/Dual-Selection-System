@@ -1,0 +1,33 @@
+@startuml
+
+left to right direction
+
+package 学院 as s {
+    actor 学科负责人
+    actor 研究生院
+}
+
+actor 导师 as tutor
+entity 招生目录 as menu
+entity 学科 as subject
+
+database 老师数据库 as tb
+
+tutor -left-> tb : 存储信息
+subject -left-> menu : 定义招生目录
+
+s --> tutor : 导师甄选
+tutor --> (判断资格) : 招生资格判断
+(判断资格) --> menu : 更新招生目录
+
+学科负责人 --> subject : 确定学科研究方向
+学科负责人 --> (分配导师到二级学科) : 管理导师分配
+(分配导师到二级学科) --> menu : 更新招生目录
+
+研究生院 --> (确定学科招生指标) : 确定招生指标
+(确定学科招生指标) --> menu : 更新招生目录
+
+menu --> (审核) : 审核流程
+(审核) --> (发布) : 发布招生目录
+
+@enduml

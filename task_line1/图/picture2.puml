@@ -1,0 +1,22 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor 管理人员
+
+usecase "修改导师招生名额" as (1)
+usecase "修改各年份导师招生资格" as (2)
+usecase "修改导师职称" as (3)
+usecase "修改导师个人信息" as (4)
+usecase "更新每年基础信息" as (5)
+usecase "根据当年年份更新导师招生资格" as (6)
+
+管理人员 --> (1)
+管理人员 --> (2)
+管理人员 --> (3)
+管理人员 --> (4)
+管理人员 --> (5)
+管理人员 --> (6)
+
+@enduml

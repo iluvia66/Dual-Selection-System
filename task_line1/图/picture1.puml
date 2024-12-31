@@ -1,0 +1,48 @@
+@startuml
+
+left to right direction
+
+package 学院 as s{
+    actor 研究生院
+    actor 学科负责人
+}
+actor 老师 as teacher 
+actor 导师 as tutor
+note right:导师是老师的一种
+entity 招生目录 as menu
+entity 学科 as subject
+entity 一级学科 as s1
+entity 二级学科 as s2
+
+database 老师数据库 as tb
+database 学科数据库 as sub
+
+teacher -left-> tb
+subject -left-> sub
+
+
+s --> teacher: 导师甄选
+teacher --> tutor:增加导师
+tutor -> (判断资格)
+s --> (判断资格):招生资格判断
+(判断资格) -down-> (分配导师到二级学科):被分配
+s --> (审核):学院审核
+
+subject -> s1 :包含
+s1 -> s2 :包含
+学科负责人 ---> subject:确定学科研究方向
+学科负责人 --> s1:管理一级学科
+学科负责人 --> s2:分类二级学科
+学科负责人 ---> (分配导师到二级学科)
+(分配导师到二级学科) --> menu:进入招生目录
+
+研究生院-->(确定学科招生指标)
+(确定学科招生指标) --> menu:进入招生目录
+
+menu --> (审核)
+(审核) -> (导师是否出现)
+(导师是否出现) -> (导师是否重复)
+(导师是否重复) -> (指标是否正确)
+(指标是否正确) -> (发布)
+
+@enduml
