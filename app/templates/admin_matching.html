@@ -1,11 +1,6 @@
-<!-- templates/admin_matching.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Matching</title>
-</head>
-<body>
+{% extends "admin_base.html" %}
+
+{% block content %}
     <h1>志愿匹配管理</h1>
     
     <!-- 匹配按钮 -->
@@ -17,11 +12,11 @@
     <h2>临时表数据</h2>
     <table border="1">
         <tr>
-            <th>Candidate ID</th>
-            <th>Advisor ID</th>
-            <th>Preference Order</th>
-            <th>Status</th>
-            <th>Created At</th>
+            <th>学号</th>
+            <th>导师id</th>
+            <th>志愿级别</th>
+            <th>匹配状态</th>
+            <th>匹配时间</th>
         </tr>
         {% for record in temp_data %}
         <tr>
@@ -65,5 +60,4 @@
     <form action="{{ url_for('admin_matching.export_matching') }}" method="GET">
         <button type="submit">下载匹配结果</button>
     </form>
-</body>
-</html>
+{% endblock %}

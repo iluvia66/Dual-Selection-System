@@ -1,0 +1,61 @@
+{% extends "advisor_base.html" %}
+
+{% block content %}
+    <h1>自由匹配</h1>
+    <h2>导师: <span class="highlight">{{ advisor_info.advisor_name }}</span></h2>
+    <h3>学院: {{ advisor_info.department }}</h3>
+    <h3>剩余名额: <span class="highlight">{{ advisor_info.remaining_quota }}</span></h3>
+    <h3>当前轮次: 第 <span class="highlight">{{ round_number }}</span> 轮</h3>
+
+    <!-- 学生选择表格 -->
+    <h2>可选择的学生列表</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>学生 ID</th>
+                <th>学生姓名</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr>
+                <td>{{ candidate.candidate_id }}</td>
+                <td>{{ candidate.candidate_name }}</td>
+                <td>
+                    {% if candidate.selected %}
+                        <span>已选择</span>
+                    {% else %}
+                        {% if not has_selected %}
+                            <form method="POST" action="{{ url_for('task_line3.free_matching_select', advisor_id=advisor_info.advisor_id, candidate_id=candidate.candidate_id) }}">
+                                <input type="hidden" name="action" value="select">
+                                <input type="hidden" name="round_number" value="{{ round_number }}">
+                                <button type="submit">选择</button>
+                            </form>
+                        {% else %}
+                            <button type="button" disabled>已完成选择</button>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 如果没有学生可选 -->
+    {% if not candidates %}
+    <p class="center">当前没有可选择的学生。</p>
+    {% endif %}
+
+    <!-- 跳过按钮 -->
+    <h2>跳过选择</h2>
+    <form method="POST" action="{{ url_for('task_line3.free_matching_select', advisor_id=advisor_info.advisor_id, candidate_id='NULL') }}">
+        <input type="hidden" name="action" value="skip">
+        <input type="hidden" name="round_number" value="{{ round_number }}">
+        <button type="submit" class="skip-button">跳过本轮</button>
+    </form>
+
+    <!-- 返回链接 -->
+    <br>
+    <a href="{{ url_for('task_line3.free_matching', advisor_id=advisor_info.advisor_id) }}">返回自由匹配页面</a>
+{% endblock %}

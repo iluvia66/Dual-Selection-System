@@ -1,0 +1,56 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+    <h1>自由匹配管理</h1>
+    <h2>当前轮次: 第 <span style="color: red;">{{ round_number }}</span> 轮</h2>
+
+    <!-- 导师选择结果 -->
+    <h2>导师选择结果</h2>
+    {% if temp_data and temp_data|length > 0 %}
+    <table>
+        <thead>
+            <tr>
+                <th>导师 ID</th>
+                <th>导师姓名</th>
+                <th>学生 ID</th>
+                <th>学生姓名</th>
+                <th>轮次</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in temp_data %}
+            <tr>
+                <td>{{ record.advisor_id }}</td>
+                <td>{{ record.advisor_name }}</td>
+                <td>{{ record.candidate_id or '未选择' }}</td>
+                <td>{{ record.candidate_name or '未选择' }}</td>
+                <td>{{ record.round_number }}</td>
+                <td>{{ record.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-data">当前轮次没有导师提交选择结果。</p>
+    {% endif %}
+
+    <!-- 管理员操作 -->
+    <div class="actions">
+        <h2>管理员操作</h2>
+        <form method="POST" action="{{ url_for('admin_matching.run_free_matching') }}">
+            <button type="submit" class="danger-button">执行本轮匹配</button>
+        </form>
+        
+        <!-- 如果是最后一轮，显示查看所有匹配结果按钮 -->
+        {% if round_number >= 3 %}
+        <br>
+        <a href="{{ url_for('admin_matching.view_all_matches') }}" class="danger-button">查看所有匹配结果</a>
+        {% endif %}
+    </div>
+
+    <!-- 刷新页面 -->
+    <br>
+    <a href="{{ url_for('admin_matching.free_matching_admin_view', round_number=round_number) }}">刷新页面</a>
+
+    {% endblock %}

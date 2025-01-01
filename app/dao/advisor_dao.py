@@ -1,41 +1,64 @@
 # app/dao/advisor_dao.py
 from app.utils.db_utils import DBConnection
 
-def get_students_by_advisor_id(advisor_id):
+# 获取导师信息
+def get_advisor_info(advisor_id):
     """
-    根据导师ID获取学生信息
-
-    该函数通过执行一个SQL查询，从数据库中获取指定导师的学生信息。
-
-    参数:
-        advisor_id (int): 导师的ID。
-
-    返回值:
-        list: 包含学生信息的列表，每个学生信息是一个字典。
+    获取导师信息和剩余名额（仅剩余名额大于 0 的导师）
     """
-    # SQL查询语句，用于从View_Advisor_Student_Preferences视图中获取指定导师的学生信息
-    query = """
-    SELECT * FROM View_Advisor_Student_Preferences
-    WHERE advisor_id =?
+    try:
+        connection = DBConnection.get_connection()
+        cursor = connection.cursor()
+
+        query = """
+        SELECT advisor_id, name, department, annual_quota - assigned_quota AS remaining_quota
+        FROM dbo.advisor
+        WHERE advisor_id = ? AND annual_quota > assigned_quota
+        """
+        cursor.execute(query, (advisor_id,))
+        advisor = cursor.fetchone()
+
+        if advisor:
+            return {
+                "advisor_id": advisor[0],
+                "advisor_name": advisor[1],
+                "department": advisor[2],
+                "remaining_quota": advisor[3]
+            }
+        return None
+
+    except Exception as e:
+        print(f"Error fetching advisor info: {e}")
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+#自由匹配
+# 查看符合条件的导师
+def get_available_advisors(department):
     """
-    
-    # 获取数据库连接
-    connection = DBConnection.get_connection()
-    
-    # 创建游标对象
-    cursor = connection.cursor()
-    
-    # 执行SQL查询，获取学生信息
-    cursor.execute(query, (advisor_id,))
-    
-    # 获取查询结果
-    students = cursor.fetchall()
-    
-    # 关闭游标
-    cursor.close()
-    
-    # 关闭数据库连接
-    connection.close()
-    
-    # 返回学生信息
-    return students
+    获取符合条件的导师列表，并按优先级排序
+    """
+    try:
+        connection = DBConnection.get_connection()
+        cursor = connection.cursor()
+
+        query = """
+        SELECT advisor_id, name, annual_quota - assigned_quota AS remaining_quota
+        FROM dbo.advisor
+        WHERE department = ?
+          AND annual_quota > assigned_quota
+        ORDER BY assigned_quota ASC, remaining_quota DESC
+        """
+        cursor.execute(query, (department,))
+        available_advisors = cursor.fetchall()
+
+        return [{"advisor_id": row[0], "advisor_name": row[1], "remaining_quota": row[2]} for row in available_advisors]
+
+    except Exception as e:
+        print(f"Error fetching available advisors: {e}")
+        return []
+    finally:
+        cursor.close()
+        connection.close()

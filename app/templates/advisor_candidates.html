@@ -1,12 +1,7 @@
- <!-- templates/advisor_candidates.html --> 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Advisor Candidates</title>
-</head>
-<body>
-    <h1>Candidates for Advisor {{ candidates[0].advisor_name }}</h1>
+{% extends "advisor_base.html" %}
+
+{% block content %}
+    <h1>选择您的学生名单 {{ advisor_info.advisor_name }}</h1>
 
     <p>
         已选择: {{ advisor_info.selected_count }} / 最大选择数: {{ advisor_info.annual_quota }}
@@ -14,14 +9,14 @@
 
     <table border="1">
         <tr>
-            <th>Candidate ID</th>
-            <th>Candidate Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Preference Order</th>
-            <th>Status</th>
-            <th>Match Date</th>
-            <th>Action</th>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>Email邮箱</th>
+            <th>联系电话</th>
+            <th>志愿</th>
+            <!-- <th>匹配状态</th> -->
+            <!-- <th>匹配时间</th> -->
+            <th>选择</th>
         </tr>
         {% for candidate in candidates %}
         <tr>
@@ -30,8 +25,8 @@
             <td>{{ candidate.candidate_email }}</td>
             <td>{{ candidate.candidate_phone }}</td>
             <td>{{ candidate.preference_order }}</td>
-            <td>{{ candidate.status }}</td>
-            <td>{{ candidate.match_date }}</td>
+            <!-- <td>{{ candidate.status }}</td>
+            <td>{{ candidate.match_date }}</td> -->
             <td>
                 <form action="{{ url_for('task_line3.toggle_selection', advisor_id=candidate.advisor_id, candidate_id=candidate.candidate_id) }}" method="POST">
                     <input type="hidden" name="preference_order" value="{{ candidate.preference_order }}">
@@ -51,5 +46,4 @@
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+{% endblock %}

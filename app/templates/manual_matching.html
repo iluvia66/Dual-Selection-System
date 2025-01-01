@@ -1,0 +1,62 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+    <h1>管理员手动匹配</h1>
+
+    <!-- 错误提示 -->
+    {% if error_message %}
+    <script>
+        alert("{{ error_message }}");
+    </script>
+    {% endif %}
+
+    <!-- 学生选择 -->
+    <form method="POST" action="{{ url_for('admin_matching.manual_matching_submit') }}">
+        <h2>选择学生</h2>
+        <select name="candidate_id" required>
+            {% for student in unmatched_students %}
+            <option value="{{ student.candidate_id }}">
+                {{ student.name }} (学院: {{ student.department }}，专业: {{ student.applying_major }})
+            </option>
+            {% endfor %}
+        </select>
+
+        <!-- 导师选择 -->
+        <h2>选择导师</h2>
+        <select name="advisor_id" required>
+            {% for advisor in available_advisors %}
+            <option value="{{ advisor.advisor_id }}">
+                {{ advisor.name }} (学院: {{ advisor.department }}，剩余名额: {{ advisor.remaining_quota }})
+            </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        <button type="submit">匹配</button>
+    </form>
+
+    <!-- 已匹配记录 -->
+    <h2>匹配成功的记录</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>匹配 ID</th>
+                <th>学生姓名</th>
+                <th>导师姓名</th>
+                <th>匹配类型</th>
+                <th>匹配日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in matched_data %}
+            <tr>
+                <td>{{ match.match_id }}</td>
+                <td>{{ match.candidate_name }}</td>
+                <td>{{ match.advisor_name }}</td>
+                <td>{{ match.match_type }}</td>
+                <td>{{ match.match_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

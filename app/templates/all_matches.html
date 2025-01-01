@@ -1,0 +1,62 @@
+{% extends "advisor_base.html" %}
+
+{% block content %}
+    <h1>匹配结果</h1>
+
+    <!-- 已匹配成功的记录 -->
+    <h2>已匹配成功的记录</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>匹配 ID</th>
+                <th>学生姓名</th>
+                <th>导师姓名</th>
+                <th>匹配类型</th>
+                <th>匹配日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in matches %}
+            <tr>
+                <td>{{ match.match_id }}</td>
+                <td>{{ match.candidate_name }}</td>
+                <td>{{ match.advisor_name }}</td>
+                <td>{{ match.match_type }}</td>
+                <td>{{ match.match_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 未匹配成功的学生 -->
+    <h2>未匹配成功的学生</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>学生 ID</th>
+                <th>学生姓名</th>
+                <th>邮箱</th>
+                <th>电话</th>
+                <th>申请专业</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in unmatched_students %}
+            <tr>
+                <td>{{ student.candidate_id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.phone }}</td>
+                <td>{{ student.applying_major }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 如果有未匹配的学生，显示手动匹配按钮 -->
+    {% if unmatched_students %}
+        <form action="{{ url_for('admin_matching.manual_matching') }}" method="GET">
+            <button type="submit" style="margin-top: 20px;">管理员手动匹配</button>
+        </form>
+    {% endif %}
+{% endblock %}

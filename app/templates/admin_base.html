@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员界面</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #215504;
+            overflow: hidden;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 25px 25px;
+            text-decoration: none;
+            font-size: 20px; /* 设置字体大小 */
+        }
+
+        .navbar a:hover {
+            background-color: #7dcb30;
+            color: black;
+        }
+
+        .login-btn {
+            float: right;
+        }
+
+        .sidebar {
+            background-color: #f4f4f4;
+            float: left;
+            width: 200px;
+            height: 100vh;
+            overflow: auto;
+        }
+
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+
+        .active, .accordion:hover {
+            background-color: #ccc;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .panel a {
+            display: block;
+            padding: 12px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .panel a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .content {
+            margin-left: 200px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="#home">管理员首页</a>
+    <div class="login-btn">
+        <a href="#login">退出登录</a>
+    </div>
+</div>
+
+<div class="sidebar">
+    <button class="accordion">匹配管理</button>
+    <div class="panel">
+        <!-- <a href="/admin/matching">志愿匹配管理</a> -->
+        <!-- <a href="/admin/free_matching">自由匹配管理</a>
+        <a href="/admin/manual_matching">手动匹配管理</a> -->
+        <a href="{{ url_for('admin_matching.view_matching') }}">志愿匹配管理</a>
+        <a href="{{ url_for('admin_matching.free_matching_admin_view') }}">自由匹配管理</a>
+        <a href="{{ url_for('admin_matching.manual_matching') }}">手动匹配管理</a>
+
+    </div>
+
+    <button class="accordion">查看</button>
+    <div class="panel">
+        <a href="{{ url_for('admin_matching.view_all_matches') }}">查看所有匹配结果</a>
+    </div>
+
+    <button class="accordion">系统设置</button>
+    <div class="panel">
+        <a href="{{ url_for('admin_matching.settings') }}">修改系统设置</a>
+    </div>
+</div>
+
+<div class="content">
+    {% block content %}
+    <!-- 子模板内容 -->
+    {% endblock %}
+</div>
+
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel && panel.style.display === "block") {
+                panel.style.display = "none";
+            } else if (panel) {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

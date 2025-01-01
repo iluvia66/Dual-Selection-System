@@ -1,0 +1,42 @@
+{% extends "advisor_base.html" %}
+
+{% block content %}
+    <h1>匹配结果</h1>
+
+    <!-- 如果有匹配结果 -->
+    {% if matches %}
+        <table border="1" style="width: 100%; text-align: center; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>学生 ID</th>
+                    <th>学生姓名</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>户籍</th>
+                    <th>考试编号</th>
+                    <th>学位</th>
+                    <th>申请专业</th>
+                    <th>匹配日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                    <tr>
+                        <td>{{ match.candidate_id }}</td>
+                        <td>{{ match.candidate_name }}</td>
+                        <td>{{ match.email }}</td>
+                        <td>{{ match.phone }}</td>
+                        <td>{{ match.nationality }}</td>
+                        <td>{{ match.exam_id }}</td>
+                        <td>{{ match.degree }}</td>
+                        <td>{{ match.applying_major }}</td>
+                        <td>{{ match.match_date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <!-- 如果没有匹配结果 -->
+        <p>当前没有匹配结果。</p>
+    {% endif %}
+{% endblock %}

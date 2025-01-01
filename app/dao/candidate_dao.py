@@ -123,3 +123,109 @@ def remove_selection(advisor_id, candidate_id):
     finally:
         cursor.close()
         connection.close()
+
+
+
+
+#自由选择阶段代码
+#获取未匹配的学生
+def get_unmatched_students_by_advisor(advisor_id):
+    """
+    根据导师 ID 获取该导师可匹配的学生列表：
+    学生的学院（department）与导师一致，且未被匹配。
+    """
+    try:
+        connection = DBConnection.get_connection()
+        cursor = connection.cursor()
+
+        # 获取导师的学院
+        advisor_query = "SELECT department FROM dbo.advisor WHERE advisor_id = ?"
+        cursor.execute(advisor_query, (advisor_id,))
+        advisor_department = cursor.fetchone()[0]
+
+        if not advisor_department:
+            raise ValueError("导师的学院信息缺失")
+
+        # 获取未匹配的学生，并按学院筛选
+        query = """
+        SELECT DISTINCT c.candidate_id, c.name
+        FROM dbo.Candidate c
+        WHERE c.department = ?  -- 学生学院必须与导师学院一致
+          AND c.candidate_id NOT IN (
+              SELECT DISTINCT candidate_id
+              FROM dbo.Preference_Match
+              WHERE status = '已匹配'
+          );
+        """
+        cursor.execute(query, (advisor_department,))
+        unmatched_students = cursor.fetchall()
+
+        return [{"candidate_id": row[0], "candidate_name": row[1]} for row in unmatched_students]
+
+    except Exception as e:
+        print(f"Error fetching unmatched students by advisor: {e}")
+        return []
+    finally:
+        cursor.close()
+        connection.close()
+
+
+#导师获取匹配成功的学生信息
+def get_matches_by_advisor(advisor_id):
+    """
+    获取该导师的匹配成功的学生记录
+    """
+    try:
+        connection = DBConnection.get_connection()
+        cursor = connection.cursor()
+
+        # 查询匹配成功的记录
+        query = """
+        SELECT 
+            pm.candidate_id, 
+            c.name AS candidate_name, 
+            c.email, 
+            c.phone, 
+            c.nationality, 
+            c.exam_id, 
+            c.degree, 
+            c.applying_major, 
+            pm.match_date 
+        FROM 
+            Preference_Match pm
+        INNER JOIN 
+            Candidate c 
+        ON 
+            pm.candidate_id = c.candidate_id
+        WHERE 
+            pm.advisor_id = ? 
+            AND pm.status = '已匹配'
+        ORDER BY pm.match_date DESC
+        """
+        cursor.execute(query, (advisor_id,))
+        results = cursor.fetchall()
+
+        # 转换结果为字典列表
+        matches = [
+            {
+                'candidate_id': row[0],
+                'candidate_name': row[1],
+                'email': row[2],
+                'phone': row[3],
+                'nationality': row[4],
+                'exam_id': row[5],
+                'degree': row[6],
+                'applying_major': row[7],
+                'match_date': row[8].strftime("%Y-%m-%d %H:%M:%S") if row[8] else None
+            }
+            for row in results
+        ]
+
+        return matches
+
+    except Exception as e:
+        print(f"Error fetching matches for advisor {advisor_id}: {e}")
+        return []
+    finally:
+        cursor.close()
+        connection.close()
